@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 	{
 		printf("could not malloc(%d) for source area\n", poolsize);
 		return -1;
-	}
+	}	
 
 	if ((file_size = fread(src, 1, poolsize - 1, fd)) <= 0)
 	{
