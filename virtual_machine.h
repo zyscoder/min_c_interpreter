@@ -10,10 +10,7 @@
 #include<time.h>
 #include<memory.h>
 
-extern int *text, *old_text, *stack;
-extern char *data;
-
-extern int *pc, *bp, *sp, ax, cycle;
+#include "global_variable.h"
 
 enum {
 	IMM, LC, LI, SC, SI, PUSH, JMP, JZ, JNZ, CALL, ENT, ADJ, LEV, LEA,
