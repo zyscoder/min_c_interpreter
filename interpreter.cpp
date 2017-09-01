@@ -11,7 +11,7 @@
 #include "syntax_analysis.h"
 #include "expression_analysis.h"
 
-//#define debug
+#define debug
 
 int main(int argc, char *argv[])
 {
