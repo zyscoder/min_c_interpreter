@@ -1,13 +1,11 @@
-#ifndef lexical_analysis_hpp
-#define lexical_analysis_hpp
+#ifndef lexical_analysis_h
+#define lexical_analysis_h
 
 #include "lexical_analysis.h"
 #include "global_variable.h"
 
 #include <iostream>
-#include <string>
 #include <cctype>
-#include <set>
 using namespace std;
 
 // "string int real else if return while "
@@ -23,7 +21,7 @@ enum {
     In, Out, Void, Main,
     // the former are pre-defined identifier
     Assign, Cond, Bor, Band, Or, Xor, And, Eq, Ne, Lt, Gt, Le, Ge,
-    Shl, Shr, Add, Sub, Mul, Div, Mod, Inc, Dec, Brak, Not, Rev
+    Shl, Shr, Add, Sub, Mul, Div, Mod, Inc, Dec, Brak
     // these are operators
 };
 
@@ -35,6 +33,9 @@ struct identifier {
     // later processing
     int ctype; // int, real, cstring
     unsigned int addr; // address
+    
+    int type;
+    int id_size;
 } ; // current parsed idntifier
 
 extern identifier *id_list = NULL, *cur_id = NULL;
@@ -125,7 +126,6 @@ void get_next_token() {
             }
             else {
                 token = Div;
-                return ;
             }
         }
         else if (token == '=') {
@@ -159,9 +159,6 @@ void get_next_token() {
             if (*(src + 1) == '=') {
                 ++src;
                 token = Ne;
-            }
-            else {
-                token = Not;
             }
             // not adding "!id" yet
         }
@@ -209,9 +206,6 @@ void get_next_token() {
                 token = Bor;
             }
         }
-        else if (token == '~') {
-            token = Rev;
-        }
         else if (token == '^') {
             token = Xor;
         }
@@ -251,7 +245,15 @@ void id_list_inintialize() {
     } // loading predefined identifier into id_list.
 }
 
-
+void match(int tok) {
+    if (token == tok) {
+        get_next_token();
+    }
+    else {
+        printf("%d: expected token: %d\n", line, tok);
+        exit(-1);
+    }
+}
 
 
 
@@ -273,7 +275,7 @@ void test() {
         "In", "Out", "Void", "Main",
         // the former are pre-defined identifier
         "Assign", "Cond", "Bor", "Band", "Or", "Xor", "And", "Eq", "Ne", "Lt", "Gt", "Le", "Ge",
-        "Shl", "Shr", "Add", "Sub", "Mul", "Div", "Mod", "Inc", "Dec", "Brak", "Not", "Rev"
+        "Shl", "Shr", "Add", "Sub", "Mul", "Div", "Mod", "Inc", "Dec", "Brak"
     };
     while (*src != 0) {
         get_next_token();
