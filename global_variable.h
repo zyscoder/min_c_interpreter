@@ -6,7 +6,8 @@ extern long token_val = 0;
 extern double ftoken_val = 0;
 
 extern char *src = NULL, *old_src = NULL;
-extern void *data_ = NULL, *stack = NULL, *bp = NULL, *sp = NULL, *ax = malloc(8);
+extern char *data_ = NULL;
+extern int *stack = NULL, *bp = NULL, *sp = NULL, ax;
 
 extern int *text = NULL, *old_text = NULL;
 extern int *pc = NULL, cycle = 0;

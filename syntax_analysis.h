@@ -33,6 +33,53 @@ void match(int tok) {
 
 void function_body()
 {
+	// type func_name (...) {...}
+	//                   -->|   |<--
+
+	// ... {
+	// 1. local declarations
+	// 2. statements
+	// }
+
+	*++text = ENT;
+
+	int type;
+	while (token != '}')
+	{
+		if (token == Int || token == Real || token == String || token == Void)
+		{
+			while (token != ';')
+			{
+				if (token == Int) { match(Int); type == INT; }
+				else if (token == String) { match(String); type == STRING; }
+				else if (token == Real) { match(Real); type == REAL; }
+				else if (token == Void) { match(Void); type == VOID; }
+
+				while (token == Mul) {
+					match(Mul);
+					type = type + PTR;
+				}
+
+				if (token != Id) {
+					printf("%d: bad paramater declaration\n", line);
+					exit(-1);
+				}
+				if (cur_id->class_ == Var) {
+					printf("%d: duplicate parameter declaration\n", line);
+					exit(-1);
+				}
+
+				match(Id);
+				cur_id->class_ = Var;
+				cur_id->addr = (int)data_;
+				data_ = (void *)((int)data_ + sizeof(int));
+
+				if (token == ',')match(',');
+			}
+			match(';');
+		}
+	}
+
 
 }
 
@@ -55,6 +102,10 @@ void function_parameter()
 		//paramater name
 		if (token != Id) {
 			printf("%d: bad paramater declaration\n", line);
+			exit(-1);
+		}
+		if (cur_id->class_ == Var) {
+			printf("%d: duplicate parameter declaration\n", line);
 			exit(-1);
 		}
 
