@@ -1,11 +1,11 @@
 #ifndef lexical_analysis_h
 #define lexical_analysis_h
 
-#include "lexical_analysis.h"
 #include "global_variable.h"
 
 #include <iostream>
 #include <cctype>
+#include <cstring>
 using namespace std;
 
 // "string int real else if return while "
@@ -14,9 +14,10 @@ using namespace std;
 // matching the third line
 
 // token list.
-enum {
+extern enum {
     // integer constant, floating point constant, function, system operation, identifier
-    Inum = 128, Fnum, Cstr, Fun, Sys, Id,
+    Inum = 128, Fnum, Cstr, Fun, Var, Sys, Id,
+
     String, Int, Real, Else, If, Return, While,
     In, Out, Void, Main,
     // the former are pre-defined identifier
@@ -31,14 +32,14 @@ struct identifier {
     string name; // the name of identifier
     
     // later processing
-    int ctype; // int, real, cstring
+    int type; // int, real, cstring
     unsigned int addr; // address
     
-    int type;
+    int class_;
     int id_size;
 } ; // current parsed idntifier
 
-extern identifier *id_list = NULL, *cur_id = NULL;
+extern identifier *id_list = NULL, *cur_id = NULL, **ed;
 
 void get_next_token() {
     char *last_pos;
@@ -60,20 +61,22 @@ void get_next_token() {
                 src++;
             }
             // writing in the empty space closest from begin.
-            for (cur_id = id_list; cur_id->token > 0; cur_id++) { // tokens begin with 128, 0 -> unused
-                if (cur_id->hash == hash && new_name == cur_id->name) {
-                    token = cur_id->token;
-                    return ;
-                }
-            }
+            //for (cur_id = id_list; cur_id->token > 0; cur_id++) { // tokens begin with 128, 0 -> unused
+			for (cur_id = ed[depth]; cur_id >= id_list; --cur_id) {
+				if (cur_id->hash == hash && new_name == cur_id->name) {
+					token = cur_id->token;
+					return;
+				}
+			}
+			cur_id = ++ed[depth];
             cur_id->name = new_name;
             cur_id->hash = hash;
-            token = cur_id->token = Id; // is a identifier
+            token = cur_id->token = Id; // is a new identifier
             return ;
         }
         // dealing with integer value and floating-point value
         else if (isdigit(token)) { // numbers
-            char tmp[50];
+            char tmp[100];
             int size = 0;
             bool is_float = false;
             while (isdigit(*src) || *src == '.') {
@@ -95,7 +98,7 @@ void get_next_token() {
         }
         // strings
         else if (token == '"') {
-            last_pos = Data;
+            last_pos = data_;
             ++src;
             while (*src != 0 && *src != '"') {
                 token_val = *src++;
@@ -109,12 +112,12 @@ void get_next_token() {
                         token_val = '\t';
                     }
                 }
-                *Data++ = token_val;
+                *data_++ = token_val;
             }
             src++;
             token = Cstr;
             token_val = (long)last_pos; // return the address of string
-            *Data = '\0';
+            *data_ = '\0';
             return ;
         }
         else if (token == '/') { // comment?
@@ -244,17 +247,6 @@ void id_list_inintialize() {
         cur_id->token = tok;
     } // loading predefined identifier into id_list.
 }
-
-void match(int tok) {
-    if (token == tok) {
-        get_next_token();
-    }
-    else {
-        printf("%d: expected token: %d\n", line, tok);
-        exit(-1);
-    }
-}
-
 
 
 

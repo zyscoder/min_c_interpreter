@@ -58,7 +58,7 @@ int eval()
 		/* LEA */
 		else if (op == LEA) { ax = (int)(bp + *pc++); }
 
-		/* 运算符指令集 */
+		/* operators */
 		else if (op == OUTR) ax = *sp++ | ax;
 		else if (op == AND) ax = *sp++ & ax;
 		else if (op == NOT) ax = ~ax;
@@ -76,7 +76,7 @@ int eval()
 		else if (op == DIV) ax = *sp++ / ax;
 		else if (op == MOD) ax = *sp++ % ax;
 
-		/* 内置函数 */
+		/* functions */
 		else if (op == EXIT) { printf("exit(%d)", *sp); return *sp; }
 		else if (op == OUTI) printf("%d", *pc++);
 		else if (op == OUTR)printf("%lf", *pc++);

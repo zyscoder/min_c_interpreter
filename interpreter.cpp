@@ -18,14 +18,14 @@ int main(int argc, char *argv[])
     	argc--;
     	argv++;
 
-	int poolsize = 64 * 1024 * 1024;
+	int poolsize = 32 * 1024 * 1024;
 
 	if (!(text = old_text = (int *)malloc(poolsize)))
 	{
 		printf("could not malloc(%d) for text area\n", poolsize);
 		return -1;
 	}
-	if (!(Data = (char *)malloc(poolsize)))
+	if (!(data_ = (char *)malloc(poolsize)))
 	{
 		printf("could not malloc(%d) for data area\n", poolsize);
 		return -1;
@@ -40,9 +40,13 @@ int main(int argc, char *argv[])
 		printf("could not malloc(%d) for source area\n", poolsize);
 		return -1;
 	}
+	if (!(ed = (identifier **)malloc(poolsize * sizeof(identifier *)))) {
+		printf("could not malloc(%d) for fucking area\n", poolsize * sizeof(identifier *));
+		return -1;
+	}
 
 	memset(text, 0, poolsize);
-	memset(Data, 0, poolsize);
+	memset(data_, 0, poolsize);
 	memset(stack, 0, poolsize);
 
 	id_list_inintialize();
